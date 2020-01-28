@@ -13,7 +13,7 @@ CC      = gcc
 
 C_STANDARD=c99
 
-CFLAGS	= -Werror -fmax-errors=1 -O6 -Wall -g -std=$(C_STANDARD) $(TYPE) $(ADDONS) 
+CFLAGS	= -DLINUX -Werror=implicit-function-declaration -fmax-errors=1 -O6 -Wall -g -std=$(C_STANDARD) $(TYPE) $(ADDONS) 
 # -g -pg
 
 LIBS    = -lm
@@ -35,7 +35,8 @@ PDDL_PARSER_OBJ = scan-fct_pddl.tab.o \
 	scan-ops_pddl.tab.o 
 
 
-SOURCES 	= main.c \
+SOURCES 	= \
+	main.c \
 	memory.c \
 	output.c \
 	parse.c \
@@ -45,7 +46,9 @@ SOURCES 	= main.c \
 	inst_final.c \
 	orderings.c \
 	relax.c \
-	search.c
+	search.c \
+	times.c \
+	random.c
 
 OBJECTS 	= $(SOURCES:.c=.o)
 
@@ -65,10 +68,10 @@ ff: $(OBJECTS) $(PDDL_PARSER_OBJ)
 
 # pddl syntax
 scan-fct_pddl.tab.c: scan-fct_pddl.y lex-fct_pddl.c
-	bison -pfct_pddl -bscan-fct_pddl $(BISON_FLAGS) scan-fct_pddl.y
+	bison --name-prefix="fct_pddl" -bscan-fct_pddl $(BISON_FLAGS) scan-fct_pddl.y
 
 scan-ops_pddl.tab.c: scan-ops_pddl.y lex-ops_pddl.c
-	bison -pops_pddl -bscan-ops_pddl $(BISON_FLAGS) scan-ops_pddl.y
+	bison --name-prefix="ops_pddl" -bscan-ops_pddl $(BISON_FLAGS) scan-ops_pddl.y
 
 lex-fct_pddl.c: lex-fct_pddl.l
 	flex --nounistd --header-file="lex-fct_pddl.tab.h" --prefix=fct_pddl --outfile="lex-fct_pddl.c" $(FLEX_FLAGS) lex-fct_pddl.l
