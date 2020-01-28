@@ -9,7 +9,7 @@
 #include "ff.h"
 #include "memory.h"
 #include "parse.h"
-#include "lex-ops_pddl.tab.h"
+#include "lex-ops_pddl.h"
 
 #ifndef YYMAXDEPTH
 #define YYMAXDEPTH 10000000

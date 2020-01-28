@@ -1,6 +1,7 @@
 %{
 #include "ff.h"
 #include "parse.h"
+#include "scan-ops_pddl.h"
 
 /* default yywrap function - always treat EOF as an EOF  */
 int ops_pddlwrap() { return 1; };
@@ -87,14 +88,14 @@ z [Zz]
 
 {e}{x}{i}{s}{t}{s} {  return(EXISTS_TOK); }
 
-:?[a-zA-Z][a-zA-Z0-9\-_]* { strupcase(yytext); strcpy(yylval.string, yytext); 
+:?[a-zA-Z][a-zA-Z0-9\-_]* { strupcase(ops_pddltext); strcpy(ops_pddllval.string, ops_pddltext); 
  return(NAME); }
 
-\?[a-zA-Z][a-zA-Z0-9\-_\[\]]* { strupcase(yytext); strcpy(yylval.string, yytext); 
+\?[a-zA-Z][a-zA-Z0-9\-_\[\]]* { strupcase(ops_pddltext); strcpy(ops_pddllval.string, ops_pddltext); 
  return(VARIABLE); }
 
 "-"[ \t]*[a-zA-Z][a-zA-Z0-9\-_\[\]]*  {
-  strupcase(yytext); strcpy(yylval.string, rmdash(yytext)); return(TYPE); }
+  strupcase(ops_pddltext); strcpy(ops_pddllval.string, rmdash(ops_pddltext)); return(TYPE); }
 
 "-"[ \t]*"("[ \t]*{e}{i}{t}{h}{e}{r} { return(EITHER_TOK); }
 

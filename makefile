@@ -13,7 +13,7 @@ CC      = gcc
 
 C_STANDARD=c99
 
-CFLAGS	= -DLINUX -Werror=implicit-function-declaration -fmax-errors=1 -O6 -Wall -g -std=$(C_STANDARD) $(TYPE) $(ADDONS) 
+CFLAGS	= -DLINUX -Werror=implicit-function-declaration -fmax-errors=1 -O6 -Wall -w -g -std=$(C_STANDARD) $(TYPE) $(ADDONS) 
 # -g -pg
 
 LIBS    = -lm
@@ -25,17 +25,19 @@ BISON_FLAGS =
 
 ####### Files
 
-PDDL_PARSER_SRC	= scan-fct_pddl.tab.c \
-	scan-ops_pddl.tab.c \
-	scan-probname.tab.c \
-	lex-fct_pddl.c \
-	lex-ops_pddl.c 
-
-PDDL_PARSER_OBJ = \
+PDDL_PARSER_SRC	= \
 	lex-fct_pddl.c \
 	lex-ops_pddl.c \
-	scan-fct_pddl.tab.o \
-	scan-ops_pddl.tab.o \
+	scan-fct_pddl.c \
+	scan-ops_pddl.c \
+	scan-probname.c \
+	
+
+PDDL_PARSER_OBJ = \
+	lex-fct_pddl.o \
+	lex-ops_pddl.o \
+	scan-fct_pddl.o \
+	scan-ops_pddl.o \
 
 
 
@@ -62,7 +64,11 @@ OBJECTS 	= $(SOURCES:.c=.o)
 
 .SUFFIXES: .c .o
 
-.c.o:; $(CC) -c $(CFLAGS) $<
+.c.o:
+	@echo "Compiling file $<" 
+	$(CC) -c $(CFLAGS) $<
+
+
 
 ####### Build rules
 
@@ -71,17 +77,33 @@ ff: $(OBJECTS) $(PDDL_PARSER_OBJ)
 	$(CC) -o ff $(OBJECTS) $(PDDL_PARSER_OBJ) $(CFLAGS) $(LIBS)
 
 # pddl syntax
-scan-fct_pddl.tab.c: scan-fct_pddl.y lex-fct_pddl.c
-	bison --defines="scan-fct_pddl.tab.h" --name-prefix="fct_pddl" --file-prefix="scan-fct_pddl" $(BISON_FLAGS) scan-fct_pddl.y
-
-scan-ops_pddl.tab.c: scan-ops_pddl.y lex-ops_pddl.c
-	bison --defines="scan-ops_pddl.tab.h" --name-prefix="ops_pddl" --file-prefix="scan-ops_pddl" $(BISON_FLAGS) scan-ops_pddl.y
-
-lex-fct_pddl.c: lex-fct_pddl.l
-	flex --nounistd --header-file="lex-fct_pddl.tab.h" --prefix=fct_pddl --outfile="lex-fct_pddl.c" $(FLEX_FLAGS) lex-fct_pddl.l
+lex-fct_pddl.c: lex-fct_pddl.l 
+	flex --nounistd --header-file="lex-fct_pddl.h" --prefix=fct_pddl --outfile="lex-fct_pddl.c" $(FLEX_FLAGS) lex-fct_pddl.l
 
 lex-ops_pddl.c: lex-ops_pddl.l
-	flex --nounistd --header-file="lex-ops_pddl.tab.h" --prefix=ops_pddl --outfile="lex-ops_pddl.c" $(FLEX_FLAGS) lex-ops_pddl.l
+	flex --nounistd --header-file="lex-ops_pddl.h" --prefix=ops_pddl --outfile="lex-ops_pddl.c" $(FLEX_FLAGS) lex-ops_pddl.l
+
+scan-fct_pddl.c: scan-fct_pddl.y
+	bison --defines="scan-fct_pddl.h" --name-prefix="fct_pddl" --file-prefix="scan-fct_pddl" --output="scan-fct_pddl.c" $(BISON_FLAGS) scan-fct_pddl.y
+
+scan-ops_pddl.c: scan-ops_pddl.y
+	bison --defines="scan-ops_pddl.h" --name-prefix="ops_pddl" --file-prefix="scan-ops_pddl" --output="scan-ops_pddl.c" $(BISON_FLAGS) scan-ops_pddl.y
+
+lex-fct_pddl.o: lex-fct_pddl.c scan-fct_pddl.c
+	@echo "Compiling fct lexer"
+	$(CC) -c $(CFLAGS) -o $@ lex-fct_pddl.c
+
+lex-ops_pddl.o: lex-ops_pddl.c scan-ops_pddl.c
+	@echo "Compiling ops lexer"
+	$(CC) -c $(CFLAGS) -o $@ lex-ops_pddl.c
+
+scan-fct_pddl.o: scan-fct_pddl.c lex-fct_pddl.o
+	@echo "Compiling fct parser"
+	$(CC) -c $(CFLAGS) -o $@ scan-fct_pddl.c
+
+scan-ops_pddl.o: scan-ops_pddl.c lex-ops_pddl.o
+	@echo "Compiling ops parser"
+	$(CC) -c $(CFLAGS) -o $@ scan-ops_pddl.c
 
 
 # misc
@@ -94,9 +116,6 @@ veryclean: clean
 	$(PDDL_PARSER_SRC) \
 	lex-fct_pddl.c lex-ops_pddl.c lex.probname.c \
 	*.output
-
-depend:
-	makedepend -- $(SOURCES) $(PDDL_PARSER_SRC)
 
 lint:
 	lclint -booltype Bool $(SOURCES) 2> output.lint

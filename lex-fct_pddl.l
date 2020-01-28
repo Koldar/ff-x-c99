@@ -1,6 +1,7 @@
 %{
 #include "ff.h"
 #include "parse.h"
+#include "scan-fct_pddl.h"
   
   /* default yywrap function - always treat EOF as an EOF  */
 int fct_pddlwrap() { return 1; };
@@ -87,13 +88,13 @@ z [Zz]
 {n}{o}{t}  {  return(NOT_TOK); }
 
 :?[a-zA-Z][a-zA-Z0-9\-_]* { strupcase( yytext );  
-  strcpy(yylval.string, yytext ); return(NAME); }
+  strcpy(fct_pddllval.string, yytext ); return(NAME); }
 
 \?[a-zA-Z][a-zA-Z0-9\-_\[\]]* {strupcase( yytext );
- strcpy(yylval.string, yytext); return(VARIABLE); }
+ strcpy(fct_pddllval.string, yytext); return(VARIABLE); }
 
 "-"[ \t]*[a-zA-Z][a-zA-Z0-9\-_\[\]]*  {strupcase(yytext); 
- strcpy(yylval.string, rmdash(yytext)); return(TYPE); }
+ strcpy(fct_pddllval.string, rmdash(yytext)); return(TYPE); }
 
 "-"[ \t]*"("[ \t]*{e}{i}{t}{h}{e}{r} { return(EITHER_TOK); }
 
