@@ -11,7 +11,7 @@ ADDONS	=
 
 CC      = gcc
 
-CFLAGS	= -O6 -Wall -g -ansi $(TYPE) $(ADDONS) 
+CFLAGS	= -Werror -fmax-errors=1 -O6 -Wall -g -ansi $(TYPE) $(ADDONS) 
 # -g -pg
 
 LIBS    = -lm
