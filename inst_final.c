@@ -48,7 +48,8 @@
 
 #include "inst_pre.h"
 #include "inst_final.h"
-
+#include "times.h"
+#include "random.h"
 
 
 
