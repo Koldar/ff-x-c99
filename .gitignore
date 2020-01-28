@@ -7,3 +7,5 @@ lex-fct_pddl.tab.h
 lex-ops_pddl.tab.h
 scan-fct_pddl.tab.c
 scan-ops_pddl.tab.c
+/scan-ops_pddl.tab.h
+/scan-fct_pddl.tab.h
