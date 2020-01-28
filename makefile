@@ -11,7 +11,7 @@ ADDONS	=
 
 CC      = gcc
 
-CFLAGS	= -Werror -fmax-errors=1 -O6 -Wall -g -ansi $(TYPE) $(ADDONS) 
+CFLAGS	= -Werror -fmax-errors=1 -O6 -Wall -g -std=c90 $(TYPE) $(ADDONS) 
 # -g -pg
 
 LIBS    = -lm
