@@ -31,8 +31,12 @@ PDDL_PARSER_SRC	= scan-fct_pddl.tab.c \
 	lex-fct_pddl.c \
 	lex-ops_pddl.c 
 
-PDDL_PARSER_OBJ = scan-fct_pddl.tab.o \
-	scan-ops_pddl.tab.o 
+PDDL_PARSER_OBJ = \
+	lex-fct_pddl.c \
+	lex-ops_pddl.c \
+	scan-fct_pddl.tab.o \
+	scan-ops_pddl.tab.o \
+
 
 
 SOURCES 	= \
