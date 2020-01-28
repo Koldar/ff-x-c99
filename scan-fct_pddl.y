@@ -83,6 +83,7 @@ static char * serrmsg[] = {
 // functions declarations
 void fcterr( int errno, char *par );
 int yyerror( char *msg );
+void load_fct_file( char *filename);
 
 /* void fcterr( int errno, char *par ); */
 
@@ -657,7 +658,8 @@ void load_fct_file( char *filename )
 
   gact_filename = filename;
   lineno = 1; 
-  yyin = fp;
+  fct_pddlin = fp;
+  // TODO remove yyin = fp;
 
   yyparse();
 

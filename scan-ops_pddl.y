@@ -9,6 +9,7 @@
 #include "ff.h"
 #include "memory.h"
 #include "parse.h"
+#include "lex-ops_pddl.tab.h"
 
 #ifndef YYMAXDEPTH
 #define YYMAXDEPTH 10000000
@@ -71,36 +72,16 @@ static char *serrmsg[] = {
   NULL
 };
 
-
-/* void opserr( int errno, char *par ); */
+void opserr( int errno, char *par );
+int yyerror( char *msg );
+void load_ops_file( char *filename );
+int supported( char *str );
 
 
 static int sact_err;
 static char *sact_err_par = NULL;
 static PlOperator *scur_op = NULL;
 static Bool sis_negated = FALSE;
-
-
-int supported( char *str )
-
-{
-
-  int i;
-  char * sup[] = { ":STRIPS", ":NEGATION", ":NEGATIVE-PRECONDITIONS", ":EQUALITY",":TYPING", 
-		   ":CONDITIONAL-EFFECTS", ":DISJUNCTIVE-PRECONDITIONS", 
-		   ":EXISTENTIAL-PRECONDITIONS", ":UNIVERSAL-PRECONDITIONS", 
-		   ":QUANTIFIED-PRECONDITIONS", ":ADL", ":DERIVED-PREDICATES", 
-		   NULL };     
-
-  for (i=0; NULL != sup[i]; i++) {
-    if ( SAME == strcmp(sup[i], str) ) {
-      return TRUE;
-    }
-  }
-  
-  return FALSE;
-
-}
 
 %}
 
@@ -266,7 +247,7 @@ NAME
 { 
   if ( !supported( $4 ) ) {
     opserr( NOT_SUPPORTED, $4 );
-    yyerror();
+    yyerror($4);
   }
 }
 require_key_star  CLOSE_PAREN
@@ -281,7 +262,7 @@ NAME
 { 
   if ( !supported( $1 ) ) {
     opserr( NOT_SUPPORTED, $1 );
-    yyerror();
+    yyerror($1);
   }
 }
 require_key_star
@@ -782,8 +763,6 @@ VARIABLE  typed_list_variable        /* a list element (gets type from next one)
 
 
 %%
-#include "lex-ops_pddl.c"
-
 
 /**********************************************************************
  * Functions
@@ -819,7 +798,7 @@ int yyerror( char *msg )
 
   fflush(stdout);
   fprintf(stderr, "\n%s: syntax error in line %d, '%s':\n", 
-	  gact_filename, lineno, yytext);
+	  gact_filename, lineno, ops_pddltext);
 
   if ( NULL != sact_err_par ) {
     fprintf(stderr, "%s %s\n", serrmsg[sact_err], sact_err_par);
@@ -850,10 +829,31 @@ void load_ops_file( char *filename )
 
   gact_filename = filename;
   lineno = 1; 
-  yyin = fp;
+  ops_pddlin = fp;
 
   yyparse();
 
   fclose( fp );/* and close file again */
+
+}
+
+int supported( char *str )
+
+{
+
+  int i;
+  char * sup[] = { ":STRIPS", ":NEGATION", ":NEGATIVE-PRECONDITIONS", ":EQUALITY",":TYPING", 
+		   ":CONDITIONAL-EFFECTS", ":DISJUNCTIVE-PRECONDITIONS", 
+		   ":EXISTENTIAL-PRECONDITIONS", ":UNIVERSAL-PRECONDITIONS", 
+		   ":QUANTIFIED-PRECONDITIONS", ":ADL", ":DERIVED-PREDICATES", 
+		   NULL };     
+
+  for (i=0; NULL != sup[i]; i++) {
+    if ( SAME == strcmp(sup[i], str) ) {
+      return TRUE;
+    }
+  }
+  
+  return FALSE;
 
 }
