@@ -72,10 +72,10 @@ ff: $(OBJECTS) $(PDDL_PARSER_OBJ)
 
 # pddl syntax
 scan-fct_pddl.tab.c: scan-fct_pddl.y lex-fct_pddl.c
-	bison --name-prefix="fct_pddl" -bscan-fct_pddl $(BISON_FLAGS) scan-fct_pddl.y
+	bison --defines="scan-fct_pddl.tab.h" --name-prefix="fct_pddl" --file-prefix="scan-fct_pddl" $(BISON_FLAGS) scan-fct_pddl.y
 
 scan-ops_pddl.tab.c: scan-ops_pddl.y lex-ops_pddl.c
-	bison --name-prefix="ops_pddl" -bscan-ops_pddl $(BISON_FLAGS) scan-ops_pddl.y
+	bison --defines="scan-ops_pddl.tab.h" --name-prefix="ops_pddl" --file-prefix="scan-ops_pddl" $(BISON_FLAGS) scan-ops_pddl.y
 
 lex-fct_pddl.c: lex-fct_pddl.l
 	flex --nounistd --header-file="lex-fct_pddl.tab.h" --prefix=fct_pddl --outfile="lex-fct_pddl.c" $(FLEX_FLAGS) lex-fct_pddl.l
