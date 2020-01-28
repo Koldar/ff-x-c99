@@ -9,6 +9,7 @@
 #include "ff.h"
 #include "memory.h"
 #include "parse.h"
+#include "lex-fct_pddl.tab.h"
 
 #ifndef YYMAXDEPTH
 #define YYMAXDEPTH 10000000
@@ -78,6 +79,10 @@ static char * serrmsg[] = {
   NULL
 };
 
+
+// functions declarations
+void fcterr( int errno, char *par );
+int yyerror( char *msg );
 
 /* void fcterr( int errno, char *par ); */
 
@@ -185,7 +190,7 @@ OPEN_PAREN  BDOMAIN_TOK  NAME  CLOSE_PAREN
 { 
   if ( SAME != strcmp($3, gdomain_name) ) {
     fcterr( BADDOMAIN, NULL );
-    yyerror();
+    yyerror($3);
   }
 }
 ;
@@ -585,8 +590,7 @@ NAME  name_star
 
 %%
 
-
-#include "lex-fct_pddl.c"
+//#include "lex-fct_pddl.c"
 
 
 /**********************************************************************
@@ -621,7 +625,7 @@ int yyerror( char *msg )
 {
   fflush( stdout );
   fprintf(stderr,"\n%s: syntax error in line %d, '%s':\n", 
-	  gact_filename, lineno, yytext );
+	  gact_filename, lineno, fct_pddltext ); //it was yytext 
 
   if ( sact_err_par ) {
     fprintf(stderr, "%s%s\n", serrmsg[sact_err], sact_err_par );
