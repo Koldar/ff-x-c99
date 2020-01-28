@@ -45,7 +45,8 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <strings.h>
+#include <string.h>
+//#include <strings.h>
 #include <ctype.h>
 #include <sys/types.h>
 #include <sys/timeb.h>
@@ -1481,4 +1482,4 @@ extern int *gaxdels, gnum_axdels;
 extern int gnum_strata;
 
 
-#endif __FF_H
+#endif /* __FF_H */
