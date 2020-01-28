@@ -16,14 +16,18 @@ CFLAGS	= -O6 -Wall -g -ansi $(TYPE) $(ADDONS)
 
 LIBS    = -lm
 
+FLEX_FLAGS =
+
+BISON_FLAGS =
+
 
 ####### Files
 
 PDDL_PARSER_SRC	= scan-fct_pddl.tab.c \
 	scan-ops_pddl.tab.c \
 	scan-probname.tab.c \
-	lex.fct_pddl.c \
-	lex.ops_pddl.c 
+	lex-fct_pddl.c \
+	lex-ops_pddl.c 
 
 PDDL_PARSER_OBJ = scan-fct_pddl.tab.o \
 	scan-ops_pddl.tab.o 
@@ -58,17 +62,17 @@ ff: $(OBJECTS) $(PDDL_PARSER_OBJ)
 	$(CC) -o ff $(OBJECTS) $(PDDL_PARSER_OBJ) $(CFLAGS) $(LIBS)
 
 # pddl syntax
-scan-fct_pddl.tab.c: scan-fct_pddl.y lex.fct_pddl.c
-	bison -pfct_pddl -bscan-fct_pddl scan-fct_pddl.y
+scan-fct_pddl.tab.c: scan-fct_pddl.y lex-fct_pddl.c
+	bison -pfct_pddl -bscan-fct_pddl $(BISON_FLAGS) scan-fct_pddl.y
 
-scan-ops_pddl.tab.c: scan-ops_pddl.y lex.ops_pddl.c
-	bison -pops_pddl -bscan-ops_pddl scan-ops_pddl.y
+scan-ops_pddl.tab.c: scan-ops_pddl.y lex-ops_pddl.c
+	bison -pops_pddl -bscan-ops_pddl $(BISON_FLAGS) scan-ops_pddl.y
 
-lex.fct_pddl.c: lex-fct_pddl.l
-	flex -Pfct_pddl lex-fct_pddl.l
+lex-fct_pddl.c: lex-fct_pddl.l
+	flex --nounistd --prefix=fct_pddl --outfile="lex-fct_pddl.c" $(FLEX_FLAGS) lex-fct_pddl.l
 
-lex.ops_pddl.c: lex-ops_pddl.l
-	flex -Pops_pddl lex-ops_pddl.l
+lex-ops_pddl.c: lex-ops_pddl.l
+	flex --nounistd --prefix=ops_pddl --outfile="lex-ops_pddl.c" $(FLEX_FLAGS) lex-ops_pddl.l
 
 
 # misc
@@ -79,7 +83,7 @@ clean:
 veryclean: clean
 	rm -f ff H* J* K* L* O* graph.* TIME* SEARCHTIME* *.symbex gmon.out \
 	$(PDDL_PARSER_SRC) \
-	lex.fct_pddl.c lex.ops_pddl.c lex.probname.c \
+	lex-fct_pddl.c lex-ops_pddl.c lex.probname.c \
 	*.output
 
 depend:
