@@ -69,10 +69,10 @@ scan-ops_pddl.tab.c: scan-ops_pddl.y lex-ops_pddl.c
 	bison -pops_pddl -bscan-ops_pddl $(BISON_FLAGS) scan-ops_pddl.y
 
 lex-fct_pddl.c: lex-fct_pddl.l
-	flex --nounistd --prefix=fct_pddl --outfile="lex-fct_pddl.c" $(FLEX_FLAGS) lex-fct_pddl.l
+	flex --nounistd --header-file="lex-fct_pddl.tab.h" --prefix=fct_pddl --outfile="lex-fct_pddl.c" $(FLEX_FLAGS) lex-fct_pddl.l
 
 lex-ops_pddl.c: lex-ops_pddl.l
-	flex --nounistd --prefix=ops_pddl --outfile="lex-ops_pddl.c" $(FLEX_FLAGS) lex-ops_pddl.l
+	flex --nounistd --header-file="lex-ops_pddl.tab.h" --prefix=ops_pddl --outfile="lex-ops_pddl.c" $(FLEX_FLAGS) lex-ops_pddl.l
 
 
 # misc
